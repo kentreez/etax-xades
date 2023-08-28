@@ -36,6 +36,7 @@ import xades4j.properties.DataObjectDesc;
 import xades4j.providers.AlgorithmsProviderEx;
 import xades4j.providers.KeyingDataProvider;
 import xades4j.providers.SigningCertChainException;
+import xades4j.providers.impl.CertificateSelector;
 import xades4j.providers.impl.DefaultAlgorithmsProviderEx;
 import xades4j.providers.impl.DirectPasswordProvider;
 import xades4j.providers.impl.FileSystemKeyStoreKeyingDataProvider;
@@ -47,8 +48,8 @@ public class XadesBesSigner {
 
 	XadesSigner signer;
 
-	public void setSignerPkcs11(String libPath, String providerName, int slotId, String password) throws Exception {// SigningException
-		// {
+	private void setSignerPkcs11ByKeyingDataProvider (KeyingDataProvider keyingProvider) throws Exception
+	{
 		try {
 			AlgorithmsProviderEx ap = new DefaultAlgorithmsProviderEx() {
 
@@ -68,7 +69,6 @@ public class XadesBesSigner {
 				}
 			};
 
-			KeyingDataProvider keyingProvider = getKeyingDataProvider(libPath, providerName, slotId, password);
 			XadesSigningProfile p = new XadesBesSigningProfile(keyingProvider);
 			p.withAlgorithmsProviderEx(ap);
 
@@ -76,6 +76,16 @@ public class XadesBesSigner {
 		} catch (Exception ex) {
 			throw new Exception("Error " + ex);
 		}
+	}
+
+	public void setSignerPkcs11(String libPath, String providerName, int slotId, String password) throws Exception {// SigningException
+		KeyingDataProvider keyingProvider = getKeyingDataProvider(libPath, providerName, slotId, password);
+		setSignerPkcs11ByKeyingDataProvider(keyingProvider);
+	}
+
+	public void setSignerPkcs11(String libPath, String providerName, int slotId, int certificateIndex, String password) throws Exception {// SigningException
+		KeyingDataProvider keyingProvider = getKeyingDataProvider(libPath, providerName, slotId, certificateIndex, password);
+		setSignerPkcs11ByKeyingDataProvider(keyingProvider);
 	}
 
 	public void setSignerPkcs12(String keyPath, String password, String pkType) throws Exception {// SigningException
@@ -113,6 +123,18 @@ public class XadesBesSigner {
 
 		KeyingDataProvider keyingProvider = new PKCS11KeyStoreKeyingDataProvider(libPath, providerName, slotId,
 				new FirstCertificateSelector(), new DirectPasswordProvider(password), null, false);
+
+		return keyingProvider;
+	}
+
+	private KeyingDataProvider getKeyingDataProvider(String libPath, String providerName, int slotId, int certificateIndex, String password)
+			throws KeyStoreException, SigningCertChainException, UnexpectedJCAException, NoSuchAlgorithmException,
+			CertificateException, IOException, UnrecoverableKeyException {
+
+				CertificateSelector certificateSelector = new CertificateSelector();
+				certificateSelector.setCertificateIndex(certificateIndex);
+				KeyingDataProvider keyingProvider = new PKCS11KeyStoreKeyingDataProvider(libPath, providerName, slotId,
+					certificateSelector, new DirectPasswordProvider(password), null, false);
 
 		return keyingProvider;
 	}

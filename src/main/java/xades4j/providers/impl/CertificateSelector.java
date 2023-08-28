@@ -24,9 +24,15 @@ import java.util.List;
  * @author Luís
  */
 public class CertificateSelector implements KeyStoreKeyingDataProvider.SigningCertSelector {
+	private int certificateIndex;
+
+	public void setCertificateIndex(int certificateIndex) {
+		this.certificateIndex = certificateIndex;
+	}
+
 	@Override
 	public X509Certificate selectCertificate(List<X509Certificate> availableCertificates) {
-		return availableCertificates.get(0);
+		return availableCertificates.get(certificateIndex);
 	}
 
 	public X509Certificate selectCertificateByIndex(List<X509Certificate> availableCertificates, int index) {
