@@ -16,6 +16,7 @@
  */
 package xades4j.providers.impl;
 
+import java.math.BigInteger;
 import java.security.cert.X509Certificate;
 import java.util.List;
 
@@ -24,15 +25,22 @@ import java.util.List;
  * @author Luís
  */
 public class CertificateSelector implements KeyStoreKeyingDataProvider.SigningCertSelector {
-	private int certificateIndex;
+	private BigInteger certificateSerial;
 
-	public void setCertificateIndex(int certificateIndex) {
-		this.certificateIndex = certificateIndex;
+	public void setCertificateSerial(String certificateSerial) {
+		this.certificateSerial = new BigInteger(certificateSerial, 16);
 	}
 
 	@Override
 	public X509Certificate selectCertificate(List<X509Certificate> availableCertificates) {
-		return availableCertificates.get(certificateIndex);
+		int index = 0;
+		for (X509Certificate cert : availableCertificates) {
+			if (cert.getSerialNumber() == certificateSerial) {
+				return availableCertificates.get(index);
+			}
+			index++;
+		}
+		return availableCertificates.get(-1);
 	}
 
 	public X509Certificate selectCertificateByIndex(List<X509Certificate> availableCertificates, int index) {

@@ -6,7 +6,7 @@ public class XadesBesSignByParametersMain {
 	private static String pkcs11LibPath;
 	private static String pkcs11ProviderName;
 	private static int pkcs11SlotId;
-    private static int pkcs11CertificateIndex;
+    private static String pkcs11CertificateSerial;
 	private static String pkcs11Password;
 	private static String pkcs12Path;
 	private static String pkcs12Password;
@@ -26,10 +26,10 @@ public class XadesBesSignByParametersMain {
                 pkcs11LibPath = args[3];
                 pkcs11ProviderName = args[4];
                 pkcs11SlotId = Integer.parseInt(args[5]);
-                pkcs11CertificateIndex = Integer.parseInt(args[6]);
+                pkcs11CertificateSerial = args[6];
                 pkcs11Password = args[7];
 				// P11 signer
-				signer.setSignerPkcs11(pkcs11LibPath, pkcs11ProviderName, pkcs11SlotId, pkcs11CertificateIndex, pkcs11Password);
+				signer.setSignerPkcs11(pkcs11LibPath, pkcs11ProviderName, pkcs11SlotId, pkcs11CertificateSerial, pkcs11Password);
 			} else if (pkType.equals("PKCS12")) {
 				// P12 signer
                 pkcs12Path = args[3];

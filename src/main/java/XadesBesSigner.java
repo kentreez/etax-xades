@@ -83,8 +83,8 @@ public class XadesBesSigner {
 		setSignerPkcs11ByKeyingDataProvider(keyingProvider);
 	}
 
-	public void setSignerPkcs11(String libPath, String providerName, int slotId, int certificateIndex, String password) throws Exception {// SigningException
-		KeyingDataProvider keyingProvider = getKeyingDataProvider(libPath, providerName, slotId, certificateIndex, password);
+	public void setSignerPkcs11(String libPath, String providerName, int slotId, String certificateSerial, String password) throws Exception {// SigningException
+		KeyingDataProvider keyingProvider = getKeyingDataProvider(libPath, providerName, slotId, certificateSerial, password);
 		setSignerPkcs11ByKeyingDataProvider(keyingProvider);
 	}
 
@@ -127,12 +127,12 @@ public class XadesBesSigner {
 		return keyingProvider;
 	}
 
-	private KeyingDataProvider getKeyingDataProvider(String libPath, String providerName, int slotId, int certificateIndex, String password)
+	private KeyingDataProvider getKeyingDataProvider(String libPath, String providerName, int slotId, String certificateSerial, String password)
 			throws KeyStoreException, SigningCertChainException, UnexpectedJCAException, NoSuchAlgorithmException,
 			CertificateException, IOException, UnrecoverableKeyException {
 
 				CertificateSelector certificateSelector = new CertificateSelector();
-				certificateSelector.setCertificateIndex(certificateIndex);
+				certificateSelector.setCertificateSerial(certificateSerial);
 				KeyingDataProvider keyingProvider = new PKCS11KeyStoreKeyingDataProvider(libPath, providerName, slotId,
 					certificateSelector, new DirectPasswordProvider(password), null, false);
 
