@@ -35,7 +35,7 @@ public class CertificateSelector implements KeyStoreKeyingDataProvider.SigningCe
 	public X509Certificate selectCertificate(List<X509Certificate> availableCertificates) {
 		int index = 0;
 		for (X509Certificate cert : availableCertificates) {
-			if (cert.getSerialNumber() == certificateSerial) {
+			if (cert.getSerialNumber().compareTo(certificateSerial) == 0) {
 				return availableCertificates.get(index);
 			}
 			index++;
